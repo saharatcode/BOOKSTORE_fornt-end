@@ -1,0 +1,52 @@
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import cartReducer from "./cartRedux";
+import productReducer from "./productRedux"
+import userReducer from "./userRedux";
+import adressReducer from "./adressRedux"
+import navBarReducer from "./navbarSearchRedux"
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
+import storage from "redux-persist/lib/storage";
+
+const persistConfig = {
+  key: "root",
+  version: 1,
+  storage,
+};
+
+// const rootReducer = combineReducers({ user: userReducer, cart: cartReducer });
+const rootReducer = combineReducers({cart: cartReducer, products: productReducer, user: userReducer, adress: adressReducer, search: navBarReducer});
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export const store = configureStore({
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
+});
+
+export let persistor = persistStore(store);
+
+
+// import {configureStore} from '@reduxjs/toolkit';
+// import cartReducer from './cartRedux';
+// import userReducer from './userRedux';
+
+// export default configureStore({
+//     reducer:{
+//         cart: cartReducer,
+//         user: userReducer,
+//     }
+// })
